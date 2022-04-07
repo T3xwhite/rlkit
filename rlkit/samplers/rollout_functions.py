@@ -128,8 +128,8 @@ def active_rollout(
 
         # if (not measure) then use state-estimator, else use default next_o
         if measure < 0.0:  # Range is (-1, 1); [0, 1) is measure
-            a_tensor = torch.unsqueeze(torch.Tensor(a), 0).cuda() # Unsqueeze changes torch.Size([17]) -> torch.Size([1, 17])
-            o_tensor = torch.unsqueeze(torch.Tensor(o), 0).cuda()
+            a_tensor = torch.unsqueeze(torch.Tensor(a), 0).to(state_estimator.device) # Unsqueeze changes torch.Size([17]) -> torch.Size([1, 17])
+            o_tensor = torch.unsqueeze(torch.Tensor(o), 0).to(state_estimator.device)
             state_est_next_o = torch.stack(state_estimator.get_predictions(o_tensor, a_tensor))
             if torch.any(torch.isnan(state_est_next_o)) or torch.any(torch.isinf(state_est_next_o)):
                 costs.append(cost)

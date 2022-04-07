@@ -11,7 +11,7 @@ from rlkit.torch.sac.asac import ASACTrainer
 from rlkit.torch.networks import ConcatMlp, ConcatEnsembleMlp
 from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="3"
+# os.environ['CUDA_VISIBLE_DEVICES']=f"{randint(0,7)}"
 
 def experiment(variant):
     expl_env = NormalizedBoxEnv(HalfCheetahEnv())
@@ -20,7 +20,7 @@ def experiment(variant):
     action_dim = eval_env.action_space.low.size
     action_dim_with_measure = action_dim + 1
     cost = 1e-3
-    replay = "concat"
+    replay = "none"
 
     # Environment and Algorithm Specifications:
     # obs_dim = 17
@@ -35,7 +35,8 @@ def experiment(variant):
         output_size=obs_dim,
         input_size=obs_dim + action_dim,
         ensemble_count=3,
-        state_estimator_lr=1e-4
+        state_estimator_lr=1e-4,
+        device=ptu.device
     )
     qf1 = ConcatMlp(
         input_size=obs_dim + action_dim_with_measure,
@@ -90,6 +91,7 @@ def experiment(variant):
         state_estimator=state_estimator,
         cost=cost,
         replay=replay,
+        device=ptu.device,
         **variant['trainer_kwargs']
     )
     algorithm = TorchBatchRLAlgorithm(
@@ -130,6 +132,6 @@ if __name__ == "__main__":
             use_automatic_entropy_tuning=True,
         ),
     )
-    setup_logger('concat mean ensemble3 lr1e-4', variant=variant)
-    ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
+    setup_logger('Imback', variant=variant)
+    ptu.set_gpu_mode(False)  # optionally set the GPU (default=False)
     experiment(variant)
